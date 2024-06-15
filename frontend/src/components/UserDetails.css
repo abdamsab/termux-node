@@ -1,0 +1,24 @@
+.user-details {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-details h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.user-details p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.user-details strong {
+    color: #555;
+}
