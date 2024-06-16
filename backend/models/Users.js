@@ -1,23 +1,22 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
-let userCounter = 1;
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     userId: {
         type: Number,
         unique: true,
-        default: () => userCounter++
     },
     firstName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
     lastName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
     email: {
         type: String,
@@ -29,23 +28,20 @@ const userSchema = new Schema({
             validator: function (v) {
                 return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
             },
-            message: props => `${props.value} is not a valid email!`
-        }
+            message: (props) => `${props.value} is not a valid email!`,
+        },
     },
     password: {
         type: String,
         required: true,
-    }
+    },
+    role: {
+        type: String,
+        enum: ['guest', 'user', 'admin'],
+        default: 'guest',
+    },
 });
 
-userSchema.pre('save', async function (next) {
-    if (this.isNew) {
-        const lastUser = await mongoose.model('User').findOne().sort('-userId').exec();
-        if (lastUser) {
-            userCounter = lastUser.userId + 1;
-        }
-    }
-    next();
-});
+userSchema.plugin(AutoIncrement, { inc_field: 'userId' });
 
 module.exports = mongoose.model('User', userSchema);

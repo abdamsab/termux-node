@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -16,10 +18,10 @@ const Register = () => {
                 email,
                 password,
             });
-			 if (response.data && response.data.token) {
-			    console.log('FTend reg token:',response.data.token)
+            if (response.data && response.data.token) {
                 localStorage.setItem('token', response.data.token);
                 alert('User registered successfully');
+                navigate('/login'); // Redirect to login page after registration
             } else {
                 throw new Error('Registration failed');
             }

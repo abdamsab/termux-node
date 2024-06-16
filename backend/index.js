@@ -35,7 +35,7 @@ app.use('/user', userRoute);
 
 
 // Protect routes with the auth middleware
-app.get('/', auth, (req, res) => {
+app.get('/', (req, res) => {
     res.json({ message: 'Hello, this xserver running in termux on Android'});
 });
 
