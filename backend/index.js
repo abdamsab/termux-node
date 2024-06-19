@@ -7,6 +7,7 @@ const cors = require('cors');
 const registerRoute = require('./routes/register');
 const loginRoute = require('./routes/login');
 const userRoute = require('./routes/user');
+const adminRoute = require('./routes/admin');
 
 const app = express();
 const port = 5000;
@@ -32,6 +33,7 @@ mongoose.connect(mongoURI)
 app.use('/register', registerRoute);
 app.use('/login', loginRoute);
 app.use('/user', userRoute);
+app.use('/admin', adminRoute);
 
 
 // Protect routes with the auth middleware

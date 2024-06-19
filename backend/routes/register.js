@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
 
         const payload = { userId: newUser.userId, role: newUser.role };
         const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '24h' });
-        console.log('register token generated:', token);
+       // console.log('register token generated:', token);
         res.status(201).json({ token });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

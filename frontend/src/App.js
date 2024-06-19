@@ -1,63 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Link, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
 import UserDetails from './components/UserDetails';
-import Home from './components/Homepage'; // Import Home component
+import AdminView from './components/AdminPanel';
+import HomePage from './components/HomePage';
+import NavBar from './components/NavBar';
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+    const [role, setRole] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
     useEffect(() => {
         const token = localStorage.getItem('token');
-        setIsLoggedIn(!!token); // Update login state based on token presence
+        if (token) {
+            const user = JSON.parse(atob(token.split('.')[1]));
+            setRole(user.role);
+        }
     }, []);
-
-    const handleLoginSuccess = () => {
-        setIsLoggedIn(true);
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        setIsLoggedIn(false);
-        window.location.href = '/login'; // Redirect to login page
+        window.location.href = '/login';
     };
 
     return (
         <Router>
             <div>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to="/">Home</Link>
-                        </li>
-                        {!isLoggedIn && (
-                            <>
-                                <li>
-                                    <Link to="/login">Login</Link>
-                                </li>
-                                <li>
-                                    <Link to="/register">Register</Link>
-                                </li>
-                            </>
-                        )}
-                        {isLoggedIn && (
-                            <>
-                                <li>
-                                    <Link to="/user">User Profile</Link>
-                                </li>
-                                <li>
-                                    <button onClick={handleLogout}>Logout</button>
-                                </li>
-                            </>
-                        )}
-                    </ul>
-                </nav>
+                <NavBar handleLogout={handleLogout} role={role} />
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/register" element={isLoggedIn ? <Navigate to="/user" /> : <Register />} />
-                    <Route path="/login" element={isLoggedIn ? <Navigate to="/user" /> : <Login onLoginSuccess={handleLoginSuccess} />} />
-                    <Route path="/user" element={isLoggedIn ? <UserDetails /> : <Navigate to="/login" />} />
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setRole={setRole} />} />
+                    <Route path="/user" element={<UserDetails />} />
+                    <Route path="/admin" element={<AdminView />} />
                 </Routes>
             </div>
         </Router>

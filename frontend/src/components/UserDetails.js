@@ -8,14 +8,14 @@ const UserDetails = () => {
     useEffect(() => {
         const fetchUserDetails = async () => {
             const token = localStorage.getItem('token');
-            console.log('token retrive from st',token);
+           // console.log('token retrive from st',token);
             try {
                 const response = await axios.get('http://localhost:5000/user', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log(response)
+               // console.log(response)
                 setUser(response.data);
             } catch (error) {
                 console.error(error);
