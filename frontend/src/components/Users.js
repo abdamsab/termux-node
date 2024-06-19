@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AdminPanel = () => {
+const Users = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ const AdminPanel = () => {
         const fetchUsers = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:5000/admin/users', {
+                const response = await axios.get('http://localhost:5000/users/users', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 console.log(response.data)
@@ -47,13 +47,13 @@ const AdminPanel = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:5000/admin/users/${selectedUser._id}`, formData, {
+            await axios.put(`http://localhost:5000/users/users/${selectedUser._id}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert('User updated successfully');
             setSelectedUser(null);
             // Refresh user list
-            const response = await axios.get('http://localhost:5000/admin/users', {
+            const response = await axios.get('http://localhost:5000/users/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(response.data);
@@ -65,8 +65,7 @@ const AdminPanel = () => {
 
     return (
         <div>
-            <h2>Admin Panel</h2>
-            <h3>All Users</h3>
+            <h2>All Users</h2>
             <ul>
                 {users.map((user) => (
                     <li key={user._id}>
@@ -112,4 +111,4 @@ const AdminPanel = () => {
     );
 };
 
-export default AdminPanel;
+export default Users;

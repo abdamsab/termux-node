@@ -21,11 +21,11 @@ const NavBar = ({ handleLogout, role }) => {
                 {role && (
                     <>
                         <li>
-                            <Link to="/user">User Profile</Link>
+                            <Link to="/profile">User Profile</Link>
                         </li>
                         {role === 'admin' && (
                             <li>
-                                <Link to="/admin">Admin View</Link>
+                                <Link to="/users">View Users</Link>
                             </li>
                         )}
                         <li>

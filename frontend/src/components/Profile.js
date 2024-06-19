@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './UserDetails.css';
+import './Profile.css';
 
-const UserDetails = () => {
+const Profile = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const fetchUserDetails = async () => {
+        const fetchProfile = async () => {
             const token = localStorage.getItem('token');
            // console.log('token retrive from st',token);
             try {
-                const response = await axios.get('http://localhost:5000/user', {
+                const response = await axios.get('http://localhost:5000/profile', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -23,7 +23,7 @@ const UserDetails = () => {
             }
         };
 
-        fetchUserDetails();
+        fetchProfile();
     }, []);
 
     if (!user) {
@@ -31,8 +31,8 @@ const UserDetails = () => {
     }
 
     return (
-        <div className="user-details">
-            <h2>User Details</h2>
+        <div className="user-profile">
+            <h2>User Profile</h2>
             <p><strong>First Name:</strong> {user.firstName}</p>
             <p><strong>Last Name:</strong> {user.lastName}</p>
             <p><strong>Email:</strong> {user.email}</p>
@@ -40,4 +40,4 @@ const UserDetails = () => {
     );
 };
 
-export default UserDetails;
+export default Profile;
