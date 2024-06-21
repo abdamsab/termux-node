@@ -20,22 +20,22 @@ const Login = ({ setIsLoggedIn, setRole }) => {
                 // Parse the token to get user information
                 const payload = JSON.parse(atob(response.data.token.split('.')[1]));
 				
-                console.log('Login payload:', payload);
+               // console.log('Login payload:', payload);
 
                 // Set isLoggedIn and role based on payload
-                console.log('before setIsloggedin')
+               // console.log('before setIsloggedin')
                 setIsLoggedIn(true);
-                console.log('after setIsLoggedin, before setRole')
+                //console.log('after setIsLoggedin, before setRole')
                 setRole(payload.role);
-				console.log('after setRole, before setItem')
+				//console.log('after setRole, before setItem')
                 // Set token in localStorage
                 localStorage.setItem('token', response.data.token);
-				console.log('after setItem, before Alert')
+				//console.log('after setItem, before Alert')
                 // Navigate to the user profile page (/user)
                 alert('Login successfully');
-                console.log('after alert, before navigate')
-                navigate('/user');
-                console.log('after navigation')
+                //console.log('after alert, before navigate')
+                navigate('/profile');
+                //console.log('after navigation')
             } else {
                 throw new Error('Login failed');
             }

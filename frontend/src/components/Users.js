@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Modal from 'react-modal';
+import './Users.css'; // Import the CSS file for styling
+
+Modal.setAppElement('#root'); // Set the app root element for accessibility
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -8,26 +12,33 @@ const Users = () => {
         firstName: '',
         lastName: '',
         email: '',
-        role: '',
+        role: 'guest', // Default role for new users
+        password: '' // Add password field
     });
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            const token = localStorage.getItem('token');
-            try {
-                const response = await axios.get('http://localhost:5000/users/users', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                console.log(response.data)
-                setUsers(response.data);
-            } catch (error) {
-                console.error(error);
-                alert('Failed to fetch users');
-            }
-        };
-
         fetchUsers();
     }, []);
+
+    const fetchUsers = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.get('http://localhost:5000/users/users', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUsers(response.data);
+        } catch (error) {
+            console.error(error);
+            showAlert('Failed to fetch users');
+        }
+    };
+
+    const showAlert = (message) => {
+        setAlertMessage(message);
+        setTimeout(() => setAlertMessage(''), 3000);
+    };
 
     const handleEditUser = (user) => {
         setSelectedUser(user);
@@ -36,7 +47,9 @@ const Users = () => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            password: '' // Reset password field
         });
+        setModalIsOpen(true);
     };
 
     const handleInputChange = (e) => {
@@ -47,43 +60,112 @@ const Users = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:5000/users/users/${selectedUser._id}`, formData, {
+            await axios.put(`http://localhost:5000/users/users/${selectedUser.userId}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            alert('User updated successfully');
+            showAlert('User updated successfully');
             setSelectedUser(null);
-            // Refresh user list
-            const response = await axios.get('http://localhost:5000/users/users', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUsers(response.data);
+            setModalIsOpen(false);
+            fetchUsers(); // Refresh user list
         } catch (error) {
             console.error(error);
-            alert('Failed to update user');
+            showAlert('Failed to update user');
         }
     };
 
+    const handleAddUser = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('http://localhost:5000/users/users', formData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            showAlert('User added successfully');
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                role: 'guest',
+                password: '' // Reset password field
+            });
+            setModalIsOpen(false);
+            fetchUsers(); // Refresh user list
+        } catch (error) {
+            console.error(error);
+            showAlert('Failed to add user');
+        }
+    };
+
+    const handleDeleteUser = async (id) => {
+        if (window.confirm('Are you sure you want to delete this user?')) {
+            const token = localStorage.getItem('token');
+            try {
+                await axios.delete(`http://localhost:5000/users/users/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                showAlert('User deleted successfully');
+                fetchUsers(); // Refresh user list
+            } catch (error) {
+                console.error(error);
+                showAlert('Failed to delete user');
+            }
+        }
+    };
+
+    const openAddUserModal = () => {
+        setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            role: 'guest',
+            password: '' // Reset password field
+        });
+        setSelectedUser(null);
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+        setSelectedUser(null);
+    };
+
     return (
-        <div>
+        <div className="users-container">
             <h2>All Users</h2>
-            <ul>
+            {alertMessage && <div className="alert">{alertMessage}</div>}
+            <button className="add-user-btn" onClick={openAddUserModal}>Add User</button>
+            <ul className="users-list">
                 {users.map((user) => (
-                    <li key={user._id}>
-                        {user.firstName} {user.lastName} - {user.email} ({user.role})
-                        <button onClick={() => handleEditUser(user)}>Edit</button>
+                    <li key={user.userId}>
+                        <div className="user-info">
+                            <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
+                            <p><strong>Email:</strong> {user.email}</p>
+                            <p><strong>Role:</strong> {user.role}</p>
+                        </div>
+                        <div className="user-actions">
+                            <button className="edit-btn" onClick={() => handleEditUser(user)}>Edit</button>
+                            <button className="delete-btn" onClick={() => handleDeleteUser(user.userId)}>Delete</button>
+                        </div>
                     </li>
                 ))}
             </ul>
 
-            {selectedUser && (
-                <form onSubmit={handleSubmit}>
-                    <h3>Edit User</h3>
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="User Modal"
+                className="modal"
+                overlayClassName="modal-overlay"
+            >
+                <form onSubmit={selectedUser ? handleSubmit : handleAddUser}>
+                    <h3>{selectedUser ? 'Edit User' : 'Add User'}</h3>
                     <input
                         type="text"
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleInputChange}
                         placeholder="First Name"
+                        required
                     />
                     <input
                         type="text"
@@ -91,6 +173,7 @@ const Users = () => {
                         value={formData.lastName}
                         onChange={handleInputChange}
                         placeholder="Last Name"
+                        required
                     />
                     <input
                         type="email"
@@ -98,15 +181,25 @@ const Users = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="Email"
+                        required
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder="Password"
+                        required={!selectedUser} // Required only when adding a new user
                     />
                     <select name="role" value={formData.role} onChange={handleInputChange}>
                         <option value="guest">Guest</option>
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <button type="submit">Update</button>
+                    <button type="submit">{selectedUser ? 'Update User' : 'Add User'}</button>
+                    <button type="button" onClick={closeModal}>Cancel</button>
                 </form>
-            )}
+            </Modal>
         </div>
     );
 };

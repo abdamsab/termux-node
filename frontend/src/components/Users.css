@@ -1,0 +1,73 @@
+.users-container {
+    padding: 20px;
+}
+
+.users-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.users-list li {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px 0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info p {
+    margin: 5px 0;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn, .delete-btn, .add-user-btn {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover, .delete-btn:hover, .add-user-btn:hover {
+    background-color: #0056b3;
+}
+
+.add-user-btn {
+    margin-bottom: 20px;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    z-index: 1000;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.alert {
+    color: red;
+    margin-bottom: 20px;
+}
