@@ -7,7 +7,7 @@ const User = require('../models/Users');
 const router = express.Router();
 
 // Get all users - only accessible by admin
-router.get('/users', auth, checkRole('admin'), async (req, res) => {
+router.get('/view', auth, checkRole('admin'), async (req, res) => {
     try {
         const users = await User.find().select('-password');
         res.json(users);
@@ -17,7 +17,7 @@ router.get('/users', auth, checkRole('admin'), async (req, res) => {
 });
 
 // Update user information - only accessible by admin
-router.put('/users/:id', auth, checkRole('admin'), async (req, res) => {
+router.put('/update/:id', auth, checkRole('admin'), async (req, res) => {
     const { firstName, lastName, email, role } = req.body;
     try {
         const user = await User.findOne({ userId: req.params.id });
@@ -40,7 +40,7 @@ router.put('/users/:id', auth, checkRole('admin'), async (req, res) => {
 
 
 // Add new user - accessible by admin
-router.post('/users', auth, checkRole('admin'), async (req, res) => {
+router.post('/add', auth, checkRole('admin'), async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
 
     if (!firstName || !lastName || !email || !password) {
@@ -74,7 +74,7 @@ router.post('/users', auth, checkRole('admin'), async (req, res) => {
 });
 
 // Delete user - accessible by admin
-router.delete('/users/:id', auth, checkRole('admin'), async (req, res) => {
+router.delete('/delete/:id', auth, checkRole('admin'), async (req, res) => {
     try {
         const user = await User.findOne({ userId: req.params.id });
         if (!user) {

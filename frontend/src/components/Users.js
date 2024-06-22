@@ -25,7 +25,7 @@ const Users = () => {
     const fetchUsers = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get('http://localhost:5000/users/users', {
+            const response = await axios.get('http://localhost:5000/users/view', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(response.data);
@@ -60,7 +60,7 @@ const Users = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:5000/users/users/${selectedUser.userId}`, formData, {
+            await axios.put(`http://localhost:5000/users/update/${selectedUser.userId}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             showAlert('User updated successfully');
@@ -77,7 +77,7 @@ const Users = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:5000/users/users', formData, {
+            await axios.post('http://localhost:5000/users/add', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             showAlert('User added successfully');
@@ -100,7 +100,7 @@ const Users = () => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             const token = localStorage.getItem('token');
             try {
-                await axios.delete(`http://localhost:5000/users/users/${id}`, {
+                await axios.delete(`http://localhost:5000/users/delete/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 showAlert('User deleted successfully');
